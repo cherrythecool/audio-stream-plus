@@ -80,6 +80,8 @@ protected:
 	static void _bind_methods();
 
 public:
+	static Ref<AudioStreamFLAC> load_from_file(const String &path);
+
 	void set_loop(bool p_enable);
 	bool has_loop() const;
 

@@ -244,7 +244,17 @@ int AudioStreamFLAC::_get_beat_count() const {
 // 	return bar_beats;
 // }
 
+Ref<AudioStreamFLAC> AudioStreamFLAC::load_from_file(const String &path) {
+	ERR_FAIL_COND_V_MSG(!FileAccess::file_exists(path), Ref<AudioStreamFLAC>(), "File could not be found at path!");
+
+	Ref<AudioStreamFLAC> stream;
+	stream.instantiate();
+	stream->set_data(FileAccess::get_file_as_bytes(path));
+	return stream;
+}
+
 void AudioStreamFLAC::_bind_methods() {
+	ClassDB::bind_static_method("AudioStreamFLAC", D_METHOD("load_from_file", "path"), &AudioStreamFLAC::load_from_file);
 
 	ClassDB::bind_method(D_METHOD("set_data", "data"), &AudioStreamFLAC::set_data);
 	ClassDB::bind_method(D_METHOD("get_data"), &AudioStreamFLAC::get_data);

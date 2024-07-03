@@ -14,7 +14,7 @@ using namespace godot;
 static Ref<ResourceFormatLoaderFLAC> resource_loader_flac;
 
 void initialize_flac_module(ModuleInitializationLevel p_level) {
-    if (p_level != MODULE_INITIALIZATION_LEVEL_EDITOR) {
+    if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
     }
 
@@ -27,7 +27,7 @@ void initialize_flac_module(ModuleInitializationLevel p_level) {
 }
 
 void uninitialize_flac_module(ModuleInitializationLevel p_level) {
-    if (p_level != MODULE_INITIALIZATION_LEVEL_EDITOR) {
+    if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
         return;
     }
 

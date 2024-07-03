@@ -18,14 +18,14 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "demo/bin/libgdflac.{}.{}.framework/libgdflac.{}.{}".format(
+        "demo/addons/gdflac/libgdflac.{}.{}.framework/libgdflac.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "demo/bin/libgdflac{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "demo/addons/gdflac/libgdflac{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 

@@ -143,7 +143,7 @@ Ref<AudioStreamPlayback> AudioStreamFLAC::_instantiate_playback() const {
 	flacs.instantiate();
 	flacs->flac_stream = Ref<AudioStreamFLAC>(this);
 
-	flacs->pFlac = drflac_open_memory(data.ptr(), data_len);
+	flacs->pFlac = drflac_open_memory(data.ptr(), data_len, NULL);
 
 	flacs->frames_mixed = 0;
 	flacs->active = false;
@@ -171,12 +171,12 @@ void AudioStreamFLAC::set_data(const PackedByteArray &p_data) {
 
 	const uint8_t* src_datar = p_data.ptr();
 
-	drflac *pflac = drflac_open_memory(src_datar, src_data_len);
+	drflac *pflac = drflac_open_memory(src_datar, src_data_len, NULL);
 	ERR_FAIL_COND(pflac == nullptr);
 
 	channels = pflac->channels;
 	sample_rate = pflac->sampleRate;
-	length = (float(pflac->totalSampleCount) / float(sample_rate)) / float(channels);
+	length = float(pflac->totalPCMFrameCount) / float(sample_rate);
 
 	clear_data();
 

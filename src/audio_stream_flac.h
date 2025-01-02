@@ -7,7 +7,7 @@
 #include <godot_cpp/classes/audio_frame.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/classes/audio_stream_playback_resampled.hpp>
-#include "thirdparty/dr_flac.h"
+#include "dr_flac.h"
 
 namespace godot {
 

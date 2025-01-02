@@ -33,7 +33,7 @@ env.Append(CPPPATH=[
 env.Append(CPPDEFINES=["USE_ALLOCA", "OPUS_BUILD"])#, "HAVE_CONFIG_H"])
 sources += Glob("thirdparty/ogg/*.c") + Glob("thirdparty/opusfile/*.c")
 
-# we will need more in future when supporting stuff like arm and x86 :p
+# we will need more in future when optimizing stuff like arm and x86 :p
 sources += Glob("thirdparty/opus/*.c") + Glob("thirdparty/opus/celt/*.c") + Glob("thirdparty/opus/silk/*.c") + Glob("thirdparty/opus/silk/float/*.c")
 
 if env["platform"] == "macos":

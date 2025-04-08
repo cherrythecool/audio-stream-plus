@@ -16,6 +16,7 @@ int32_t AudioStreamPlaybackOpus::_mix_resampled(AudioFrame *p_buffer, int p_fram
 
 		if (mixed == 0) {
 			if (!opus_stream->loop) {
+				_stop();
 				break;
 			}
 

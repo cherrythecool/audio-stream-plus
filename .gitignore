@@ -64,3 +64,5 @@ mono_crash.*.json
 .vscode/
 
 *.flac
+
+build/

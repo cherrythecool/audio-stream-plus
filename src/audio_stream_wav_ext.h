@@ -1,5 +1,5 @@
-#ifndef AUDIO_STREAM_FLAC_H
-#define AUDIO_STREAM_FLAC_H
+#ifndef AUDIO_STREAM_WAV_EXT_H
+#define AUDIO_STREAM_WAV_EXT_H
 
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/texture.hpp>
@@ -7,14 +7,14 @@
 #include <godot_cpp/classes/audio_frame.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/classes/audio_stream_playback_resampled.hpp>
-#include "dr_flac.h"
+#include "dr_wav.h"
 
 namespace godot {
 
-class AudioStreamFLAC;
+class AudioStreamWavExt;
 
-class AudioStreamPlaybackFLAC : public AudioStreamPlaybackResampled {
-	GDCLASS(AudioStreamPlaybackFLAC, AudioStreamPlaybackResampled);
+class AudioStreamPlaybackWavExt : public AudioStreamPlaybackResampled {
+	GDCLASS(AudioStreamPlaybackWavExt, AudioStreamPlaybackResampled);
 
 	enum {
 		FADE_SIZE = 256
@@ -26,11 +26,9 @@ class AudioStreamPlaybackFLAC : public AudioStreamPlaybackResampled {
 	bool active = false;
 	int loops = 0;
 
-	friend class AudioStreamFLAC;
+	friend class AudioStreamWavExt;
 
-	Ref<AudioStreamFLAC> flac_stream;
-
-	//void populate_first_frame(int, mp3dec_frame_info_t *);
+	Ref<AudioStreamWavExt> flac_stream;
 
 protected:
 	static void _bind_methods();
@@ -51,18 +49,18 @@ public:
 
 	virtual void _tag_used_streams() override;
 
-	AudioStreamPlaybackFLAC() {}
-	~AudioStreamPlaybackFLAC();
+	AudioStreamPlaybackWavExt() {}
+	~AudioStreamPlaybackWavExt();
 };
 
-class AudioStreamFLAC : public AudioStream {
+class AudioStreamWavExt : public AudioStream {
 
-	GDCLASS(AudioStreamFLAC, AudioStream);
+	GDCLASS(AudioStreamWavExt, AudioStream);
 
-	friend class AudioStreamPlaybackFLAC;
+	friend class AudioStreamPlaybackWavExt;
 
 	PackedByteArray data;
-	uint32_t data_len = 0;
+	uint64_t data_len = 0;
 
 	double sample_rate = 1.0;
 	int channels = 1;
@@ -74,13 +72,13 @@ class AudioStreamFLAC : public AudioStream {
 	double bpm = 0;
 	int beat_count = 0;
 	int bar_beats = 4;
-	drflac *pFlac = nullptr;
+	drwav *wav = nullptr;
 
 protected:
 	static void _bind_methods();
 
 public:
-	static Ref<AudioStreamFLAC> load_from_file(const String &path);
+	static Ref<AudioStreamWavExt> load_from_file(const String &path);
 
 	void set_loop(bool p_enable);
 	bool has_loop() const;
@@ -107,8 +105,8 @@ public:
 
 	virtual bool _is_monophonic() const override;
 
-	AudioStreamFLAC();
-	virtual ~AudioStreamFLAC();
+	AudioStreamWavExt();
+	virtual ~AudioStreamWavExt();
 };
 
 };

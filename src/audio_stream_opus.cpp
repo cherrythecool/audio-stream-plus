@@ -117,14 +117,11 @@ void AudioStreamOpus::clear_data() {
 }
 
 void AudioStreamOpus::set_data(const PackedByteArray &p_data) {
-	int src_data_len = p_data.size();
-	const uint8_t* src_datar = p_data.ptr();
-
 	clear_data();
 
-	data.resize(src_data_len);//AudioServer::get_singleton()->audio_data_alloc(src_data_len, src_datar.ptr());
-	memcpy(data.ptrw(), src_datar, src_data_len);
-	data_len = src_data_len;
+	data_len = p_data.size();
+	data.resize(data_len);//AudioServer::get_singleton()->audio_data_alloc(src_data_len, src_datar.ptr());
+	memcpy(data.ptrw(), p_data.ptr(), data_len);
 
 	int err = 0;
 	OggOpusFile *opusfile = op_open_memory(data.ptr(), data.size(), &err);

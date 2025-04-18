@@ -6,6 +6,9 @@
 #include "audio_stream_opus.h"
 #include "resource_format_loader_opus.h"
 
+#include "audio_stream_wav_ext.h"
+#include "resource_format_loader_wav_ext.h"
+
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -16,6 +19,7 @@ using namespace godot;
 
 static Ref<ResourceFormatLoaderFLAC> resource_loader_flac;
 static Ref<ResourceFormatLoaderOpus> resource_loader_opus;
+static Ref<ResourceFormatLoaderWavExt> resource_loader_wav_ext;
 
 void initialize_audio_modules(ModuleInitializationLevel p_level) {
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
@@ -35,6 +39,13 @@ void initialize_audio_modules(ModuleInitializationLevel p_level) {
     ClassDB::register_class<ResourceFormatLoaderOpus>();
     resource_loader_opus.instantiate();
     ResourceLoader::get_singleton()->add_resource_format_loader(resource_loader_opus);
+
+    // TODO: implement resourceFormatSaver/ ResourceFormatLoader, otherwise importer will not work
+    ClassDB::register_class<AudioStreamWavExt>();
+    ClassDB::register_class<AudioStreamPlaybackWavExt>();
+    ClassDB::register_class<ResourceFormatLoaderWavExt>();
+    resource_loader_wav_ext.instantiate();
+    ResourceLoader::get_singleton()->add_resource_format_loader(resource_loader_wav_ext);
 }
 
 void uninitialize_audio_modules(ModuleInitializationLevel p_level) {
@@ -47,6 +58,9 @@ void uninitialize_audio_modules(ModuleInitializationLevel p_level) {
 
     ResourceLoader::get_singleton()->remove_resource_format_loader(resource_loader_opus);
     resource_loader_opus.unref();
+
+    ResourceLoader::get_singleton()->remove_resource_format_loader(resource_loader_wav_ext);
+    resource_loader_wav_ext.unref();
 }
 
 extern "C" {

@@ -27,7 +27,7 @@ int32_t AudioStreamPlaybackFLAC::_mix_resampled(AudioFrame *p_buffer, int p_fram
 		if (start_buffer > 0) {
 			buffer = (buffer + start_buffer * 2);
 		}
-		int mixed = drflac_read_pcm_frames_f32(pFlac, todo, buffer);
+		int mixed = drflac_read_pcm_frames_f32(flac_stream->pFlac, todo, buffer);
 		for(int i = 0; i < mixed; i++){
 			if (loop_fade_remaining < FADE_SIZE) {
 				p_buffer[p_frames - todo].left += loop_fade[loop_fade_remaining].left * (float(FADE_SIZE - loop_fade_remaining) / float(FADE_SIZE));
@@ -112,7 +112,7 @@ void AudioStreamPlaybackFLAC::_seek(double p_time) {
 		p_time = 0;
 	}
 	frames_mixed = flac_stream->sample_rate * p_time;
-	drflac_seek_to_pcm_frame(pFlac, frames_mixed);
+	drflac_seek_to_pcm_frame(flac_stream->pFlac, frames_mixed);
 }
 
 void AudioStreamPlaybackFLAC::_tag_used_streams() {
@@ -120,10 +120,7 @@ void AudioStreamPlaybackFLAC::_tag_used_streams() {
 }
 
 AudioStreamPlaybackFLAC::~AudioStreamPlaybackFLAC() {
-	if (pFlac) {
-		drflac_close(pFlac);
-		pFlac = NULL;
-	}
+	
 }
 
 void AudioStreamPlaybackFLAC::_bind_methods() {
@@ -141,21 +138,20 @@ Ref<AudioStreamPlayback> AudioStreamFLAC::_instantiate_playback() const {
 	flacs.instantiate();
 	flacs->flac_stream = Ref<AudioStreamFLAC>(this);
 
-	flacs->pFlac = drflac_open_memory(data.ptr(), data_len, NULL);
+	flacs->flac_stream->pFlac = drflac_open_memory(data.ptr(), data_len, NULL);
 
 	flacs->frames_mixed = 0;
 	flacs->active = false;
 	flacs->loops = 0;
 	
-	if (!flacs->pFlac) {
-		ERR_FAIL_COND_V(!flacs->pFlac, Ref<AudioStreamPlaybackFLAC>());
+	if (!flacs->flac_stream->pFlac) {
+		ERR_FAIL_COND_V(!flacs->flac_stream->pFlac, Ref<AudioStreamPlaybackFLAC>());
 	}
 
 	return flacs;
 }
 
 String AudioStreamFLAC::_get_stream_name() const {
-
 	return ""; //return stream_name;
 }
 
@@ -164,23 +160,22 @@ void AudioStreamFLAC::clear_data() {
 }
 
 void AudioStreamFLAC::set_data(const PackedByteArray &p_data) {
-
-	int src_data_len = p_data.size();
-
-	const uint8_t* src_datar = p_data.ptr();
-
-	drflac *pflac = drflac_open_memory(src_datar, src_data_len, NULL);
-	ERR_FAIL_COND(pflac == nullptr);
-
-	channels = pflac->channels;
-	sample_rate = pflac->sampleRate;
-	length = float(pflac->totalPCMFrameCount) / float(sample_rate);
-
 	clear_data();
 
-	data.resize(src_data_len);//AudioServer::get_singleton()->audio_data_alloc(src_data_len, src_datar.ptr());
-	memcpy(data.ptrw(), src_datar, src_data_len);
-	data_len = src_data_len;
+	data_len = p_data.size();
+	data.resize(data_len);//AudioServer::get_singleton()->audio_data_alloc(src_data_len, src_datar.ptr());
+	memcpy(data.ptrw(), p_data.ptr(), data_len);
+
+	if (pFlac != nullptr) {
+		drflac_close(pFlac);
+	}
+
+	pFlac = drflac_open_memory(data.ptr(), data.size(), NULL);
+	ERR_FAIL_COND(pFlac == nullptr);
+
+	channels = pFlac->channels;
+	sample_rate = pFlac->sampleRate;
+	length = float(pFlac->totalPCMFrameCount) / float(sample_rate);
 }
 
 PackedByteArray AudioStreamFLAC::get_data() const {
@@ -286,4 +281,9 @@ AudioStreamFLAC::AudioStreamFLAC() {
 
 AudioStreamFLAC::~AudioStreamFLAC() {
 	clear_data();
+
+	if (pFlac) {
+		drflac_close(pFlac);
+		pFlac = nullptr;
+	}
 }

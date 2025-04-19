@@ -79,7 +79,7 @@ void AudioStreamPlaybackWavExt::_seek(double p_time) {
 	if (p_time >= flac_stream->get_length()) {
 		p_time = 0;
 	}
-	
+
 	frames_mixed = flac_stream->sample_rate * p_time;
 	drwav_seek_to_pcm_frame(flac_stream->wav, frames_mixed);
 }
@@ -218,8 +218,18 @@ Ref<AudioStreamWavExt> AudioStreamWavExt::load_from_file(const String &path) {
 	return stream;
 }
 
+Ref<AudioStreamWavExt> AudioStreamWavExt::load_from_buffer(const PackedByteArray &p_data) {
+	ERR_FAIL_COND_V_MSG(p_data.is_empty(), Ref<AudioStreamWavExt>(), "Empty data!");
+
+	Ref<AudioStreamWavExt> stream;
+	stream.instantiate();
+	stream->set_data(p_data);
+	return stream;
+}
+
 void AudioStreamWavExt::_bind_methods() {
 	ClassDB::bind_static_method("AudioStreamWavExt", D_METHOD("load_from_file", "path"), &AudioStreamWavExt::load_from_file);
+	ClassDB::bind_static_method("AudioStreamWavExt", D_METHOD("load_from_buffer", "data"), &AudioStreamWavExt::load_from_buffer);
 
 	ClassDB::bind_method(D_METHOD("set_data", "data"), &AudioStreamWavExt::set_data);
 	ClassDB::bind_method(D_METHOD("get_data"), &AudioStreamWavExt::get_data);

@@ -12,6 +12,8 @@ ResourceFormatLoaderWavExt::~ResourceFormatLoaderWavExt() {
 PackedStringArray ResourceFormatLoaderWavExt::_get_recognized_extensions() const {
     PackedStringArray arr;
     arr.push_back("wavext");
+    arr.push_back("aiff");
+    arr.push_back("aifc");
     return arr;
 }
 
@@ -20,7 +22,8 @@ bool ResourceFormatLoaderWavExt::_handles_type(const StringName &type) const {
 }
 
 String ResourceFormatLoaderWavExt::_get_resource_type(const String &path) const {
-    if (path.get_extension() == "wavext") {
+    godot::String extension = path.get_extension();
+    if (extension == "wavext" || extension == "aiff" || extension == "aifc") {
         return "AudioStreamWavExt";
     }
 

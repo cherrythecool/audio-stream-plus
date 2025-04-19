@@ -79,6 +79,7 @@ protected:
 
 public:
 	static Ref<AudioStreamWavExt> load_from_file(const String &path);
+	static Ref<AudioStreamWavExt> load_from_buffer(const PackedByteArray &p_data);
 
 	void set_loop(bool p_enable);
 	bool has_loop() const;

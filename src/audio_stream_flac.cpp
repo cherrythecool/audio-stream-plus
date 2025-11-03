@@ -27,7 +27,25 @@ int32_t AudioStreamPlaybackFLAC::_mix_resampled(AudioFrame *p_buffer, int p_fram
 		if (start_buffer > 0) {
 			buffer = (buffer + start_buffer * 2);
 		}
-		int mixed = drflac_read_pcm_frames_f32(flac_stream->pFlac, todo, buffer);
+
+        int mixed = 0;
+        float* custom_buffer = nullptr;
+
+        // yeah this will break above 2, don't care to fix it yet, sorry (stereo and mono are by far the most common formats, so...)
+        if (flac_stream->channels != 1) {
+		    mixed = drflac_read_pcm_frames_f32(flac_stream->pFlac, todo, buffer);
+        } else {
+            custom_buffer = new float[todo];
+		    mixed = drflac_read_pcm_frames_f32(flac_stream->pFlac, todo, custom_buffer);
+
+            for (int i = 0; i < mixed; i++) {
+                p_buffer[i].left = custom_buffer[i];
+                p_buffer[i].right = custom_buffer[i];
+            }
+
+            delete custom_buffer;
+        }
+
 		for(int i = 0; i < mixed; i++){
 			if (loop_fade_remaining < FADE_SIZE) {
 				p_buffer[p_frames - todo].left += loop_fade[loop_fade_remaining].left * (float(FADE_SIZE - loop_fade_remaining) / float(FADE_SIZE));

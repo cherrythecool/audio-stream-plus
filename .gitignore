@@ -67,3 +67,4 @@ mono_crash.*.json
 *.flac
 
 build/
+**.DS_Store
